@@ -179,26 +179,13 @@ async def convert_file(md_path: Path, outdir: Path, voice: str, rate: str, max_c
     chunks = chunk_text(plain, max_chars)
     print(f"[{md_path.name}] {len(chunks)} darab hangrészletre bontva.")
 
-    tmpdir = outdir / f".tmp_{md_path.stem}"
-    tmpdir.mkdir(parents=True, exist_ok=True)
-
-    part_paths = []
+    width = max(3, len(str(len(chunks))))
     for idx, chunk in enumerate(chunks, start=1):
-        part_path = tmpdir / f"part_{idx:03d}.mp3"
-        print(f"[{md_path.name}] {idx}/{len(chunks)} rész felolvasása ({len(chunk)} karakter)...")
+        part_path = outdir / f"{md_path.stem}_{idx:0{width}d}.mp3"
+        print(f"[{md_path.name}] {idx}/{len(chunks)} rész felolvasása ({len(chunk)} karakter) -> {part_path.name}...")
         await synthesize_chunk(chunk, voice, rate, part_path)
-        part_paths.append(part_path)
 
-    final_path = outdir / f"{md_path.stem}.mp3"
-    with open(final_path, "wb") as out_f:
-        for p in part_paths:
-            out_f.write(p.read_bytes())
-
-    for p in part_paths:
-        p.unlink()
-    tmpdir.rmdir()
-
-    print(f"[{md_path.name}] KÉSZ -> {final_path}")
+    print(f"[{md_path.name}] KÉSZ -> {len(chunks)} rész mentve ide: {outdir}")
 
 
 async def main_async(args):

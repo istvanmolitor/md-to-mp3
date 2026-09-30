@@ -8,6 +8,7 @@ A szkript kitisztítja a Markdown formázást (fejlécek, listák, táblázatok,
 
 - Python 3.9+
 - [edge-tts](https://pypi.org/project/edge-tts/) csomag
+- a grafikus felülethez: Tkinter (Debian/Ubuntu-n gyakran külön csomag: `sudo apt install python3-tk`)
 
 Telepítés:
 
@@ -21,7 +22,15 @@ vagy közvetlenül:
 pip3 install --user edge-tts
 ```
 
-## Használat
+## Grafikus felület
+
+```bash
+python3 md2mp3_gui.py
+```
+
+Az ablakban kiválaszthatók a konvertálandó `.md` fájlok, a kimeneti mappa, a hang és a sebesség, majd a "Konvertálás indítása" gombbal indítható a folyamat. A progress bar és az állapotsor mutatja, hogy éppen melyik fájl melyik része készül.
+
+## Használat (parancssor)
 
 ```bash
 python3 md2mp3.py fejezet1.md fejezet2.md
@@ -33,7 +42,7 @@ Több fájl és minta (glob) is megadható:
 python3 md2mp3.py *.md
 ```
 
-Ez alapértelmezés szerint az aktuális könyvtár `mp3/` almappájába menti a kimeneteket, fájlonként egy-egy `.mp3`-at (a bemeneti fájl nevével, pl. `fejezet1.mp3`).
+Ez alapértelmezés szerint az aktuális könyvtár `mp3/` almappájába menti a kimeneteket. Hosszú fájloknál a szkript a felolvasást `--max-chars` méretű részekre bontja, és **minden részt külön, sorszámozott MP3 fájlba** ment (pl. `fejezet1_001.mp3`, `fejezet1_002.mp3`, ...) — nem fűzi össze őket egyetlen nagy fájllá. Így hosszú anyagoknál a konvertálás félbeszakítva is használható eredményt ad, és nem kell megvárni a teljes fájl elkészülését az első résznyi hanghoz.
 
 ### Kapcsolók
 
@@ -57,5 +66,4 @@ python3 md2mp3.py 01_bevezetes.md 02_alapfogalmak.md \
 
 1. Beolvassa a Markdown fájlt, és natúr, felolvasható szöveggé alakítja (a kódblokkokat teljesen kihagyja, a táblázatokat mondatokká alakítja).
 2. A szöveget bekezdések mentén darabokra vágja (`--max-chars` méretig), mert az Edge-TTS egy kérésben csak korlátozott hosszúságú szöveget fogad el.
-3. Az egyes darabokat az Edge-TTS szolgáltatással MP3-ra szintetizálja.
-4. A részeket egyetlen MP3 fájllá fűzi össze, majd törli az ideiglenes fájlokat.
+3. Az egyes darabokat az Edge-TTS szolgáltatással külön-külön, sorszámozott MP3 fájlokra szintetizálja (pl. `fejezet1_001.mp3`, `fejezet1_002.mp3`, ...).
